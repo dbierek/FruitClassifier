@@ -1,102 +1,102 @@
-<!DOCTYPE html>
-<html>
+<div>
+    <div id="fruit-classifier">
+        <style type="text/css" scoped>
+            #fruit-classifier {
+                background-color: #225;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 500px;
+            }
 
-<head>
-    <title>Index</title>
-    <style>
-        #fruit-classifier {
-            background-color: #225;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            width: 500px;
-        }
-        #fruit-image-div {
-            flex-direction: row;
-            flex-wrap: wrap;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-        }
-        #fruit-image, #fruit-image img, #fruit-image g {
-            font: 20px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            color: white
-        }
-        #next-button {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-    </style>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script>
-        function getNext() {
-            let div = document.getElementById('fruit-image-div');
-            document.getElementById('next-button').disabled = true;
-            fetch('/next').then(response => {
-                response.json().then(data => {
-                    console.log("Next Pressed")
-                    div.innerHTML = data.text;
-                    showFruitImageFeatures(data.features);
-                    document.getElementById('next-button').disabled = false;
-                });
-            });
-        }
-        function showFruitImageFeatures(allFeatures) {
-            for (let i = 0; i < allFeatures.length; i += 3) {
-                var size = allFeatures[i].length;
-                let squareSize = Math.floor(200 / size);
-                dataset = [];
-                for (var y = 0; y < size; y++) {
-                    var tempData = [size];
-                    for (var x = 0; x < size; x++) {
-                        colorR = 255 * allFeatures[i][y][x]
-                        colorG = 255 * allFeatures[i + 1][y][x]
-                        colorB = 255 * allFeatures[i + 2][y][x]
-                        tempData[x] = { x: x, y: y, color: "rgb(" + colorR + ", " + colorG + "," + colorB + ")" };
-                    };
-                    dataset.push(tempData);
-                };
+            #fruit-image-div {
+                flex-direction: row;
+                flex-wrap: wrap;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
 
-                d3.select("#fruit-image-div").append("svg")
-                    .attr("width", size * squareSize)
-                    .attr("height", size * squareSize)
-                    .selectAll("rect")
-                    .data(dataset)
-                    .enter()
-                    .append("g")
-                    .selectAll("rect")
-                    .data(function (d, i) { return d; })
-                    .enter()
-                    .append("rect")
-                    .attr("x", function (d) {
-                        return d.x * squareSize;
+            #fruit-image,
+            #fruit-image img,
+            #fruit-image g {
+                font: 20px;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                color: white
+            }
+
+            #next-button {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        </style>
+        <div id="fruit-image-div"></div>
+        <button id="next-button">Next</button>
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script>
+            function getNext() {
+                let div = document.getElementById('fruit-image-div');
+                document.getElementById('next-button').disabled = true;
+                fetch('http://localhost:5000/next')
+                    .then(response => {
+                        console.log("next/ response")
+                        console.log(response)
+                        return response.json()
                     })
-                    .attr("y", function (d) {
-                        return d.y * squareSize;
-                    })
-                    .attr("height", squareSize)
-                    .attr("width", squareSize)
-                    .attr("fill", function (d) {
-                        return d.color
+                    .then(data => {
+                        console.log(data)
+                        console.log("Next Pressed")
+                        div.innerHTML = data.html;
+                        showFruitImageFeatures(data.features);
+                        document.getElementById('next-button').disabled = false;
                     });
             }
-        }
-    </script>
-</head>
+            function showFruitImageFeatures(allFeatures) {
+                for (let i = 0; i < allFeatures.length; i += 3) {
+                    var size = allFeatures[i].length;
+                    let squareSize = Math.floor(200 / size);
+                    dataset = [];
+                    for (var y = 0; y < size; y++) {
+                        var tempData = [size];
+                        for (var x = 0; x < size; x++) {
+                            colorR = 255 * allFeatures[i][y][x]
+                            colorG = 255 * allFeatures[i + 1][y][x]
+                            colorB = 255 * allFeatures[i + 2][y][x]
+                            tempData[x] = { x: x, y: y, color: "rgb(" + colorR + ", " + colorG + "," + colorB + ")" };
+                        };
+                        dataset.push(tempData);
+                    };
 
-<body>
-    <div id="fruit-classifier">
-        <div id="fruit-image-div"></div>
-        <button id="next-button" onclick="getNext()">Next</button>
-        <script>
+                    d3.select("#fruit-image-div").append("svg")
+                        .attr("width", size * squareSize)
+                        .attr("height", size * squareSize)
+                        .selectAll("rect")
+                        .data(dataset)
+                        .enter()
+                        .append("g")
+                        .selectAll("rect")
+                        .data(function (d, i) { return d; })
+                        .enter()
+                        .append("rect")
+                        .attr("x", function (d) {
+                            return d.x * squareSize;
+                        })
+                        .attr("y", function (d) {
+                            return d.y * squareSize;
+                        })
+                        .attr("height", squareSize)
+                        .attr("width", squareSize)
+                        .attr("fill", function (d) {
+                            return d.color
+                        });
+                }
+                document.getElementById("next-button").addEventListener("click", getNext);
+            }
             getNext();
         </script>
     </div>
-</body>
-
-</html>
+</div>

@@ -1,10 +1,11 @@
-from FruitClassifierFeatures import show_features
+from FruitClassifierFeatures import show_features_pillow
 from random import random
 import os
 import tensorflow as tf
 from keras.models import load_model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import numpy as np
+
 
 def get_class_names():
     class_names = os.listdir(os.path.join('static/fruit/', 'test'))
@@ -32,7 +33,8 @@ def next_image(file_names, class_names, model):
     image_num = int(random() * num_predictions)
     img_path = os.path.normpath(os.path.join(os.path.join(os.path.join('static/', 'fruit/'), 'test'), file_names[image_num]))
     label = class_names[np.argmax((get_prediction(img_path, model)))]
-    features = show_features(img_path, model)
+    # features = show_features(img_path, model)
+    features = show_features_pillow(img_path, model)
     return label, file_names[image_num], features
 
 model = load_model('savedModel')
