@@ -6,24 +6,6 @@ from tensorflow import expand_dims
 from tensorflow.keras.applications.resnet import preprocess_input
 import numpy as np
 from PIL import Image
-def show_features(img_path, model):
-    img = load_img(img_path, target_size=(100, 100))
-    img = img_to_array(img)
-    img = expand_dims(img, axis=0)
-    img = preprocess_input(img)
-    features = []
-    for layer_num in range(0, 6):
-        layer_model = Model(inputs=model.inputs, outputs=model.layers[layer_num].output)
-        feature_maps = layer_model.predict(img)
-        for feature_map in feature_maps:
-            feature_map_min = feature_map.min()
-            feature_map_max = feature_map.max()
-            for feature_num in range(3):                
-                norm_feature_map = (feature_map - feature_map_min) / (feature_map_max - feature_map_min)
-                features.append(norm_feature_map[:, :, feature_num].tolist())                
-    return features
-
-
 
 def show_features_pillow(img_path, model):
     img = load_img(img_path, target_size=(100, 100))

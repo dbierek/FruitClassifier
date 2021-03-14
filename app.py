@@ -7,11 +7,6 @@ app = Flask(__name__)
 
 app.config['TEST_FOLDER'] = os.path.join(os.path.join('static/', 'fruit/'), 'test')
 
-# @app.route('/')
-def show_index():
-    return render_template("index.html")
-
-# @app.route('/next')
 @app.route('/fruit-classifier')
 def show_images():
     classification, path, features = FruitClassifier.get_images()
