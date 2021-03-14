@@ -1,13 +1,15 @@
 import os
 import FruitClassifier
 from flask import Flask, render_template
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-
+CORS(app)
 
 app.config['TEST_FOLDER'] = os.path.join(os.path.join('static/', 'fruit/'), 'test')
 
 @app.route('/fruit-classifier')
+@cross_origin()
 def show_images():
     classification, path, features = FruitClassifier.get_images()
     full_filename = os.path.join('fruit/', path)
