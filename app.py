@@ -17,8 +17,16 @@ def show_images():
     return {
         "imageURL": full_filename,
         "classification": classification,
-        "features": features,
+        "features": features
+    }
 
+
+@app.route('/get-file-names)')
+@cross_origin()
+def get_file_names():
+    file_names = FruitClassifier.get_file_names()
+    return {
+        "fileNames": file_names
     }
 
 
