@@ -4,6 +4,6 @@ gunicorn==20.0.4
 keras==2.2.5
 numpy==1.17.2
 pandas==0.25
-tensorflow==1.15.0
+tensorflow==1.14.0
 pillow==6.2.1
 flask-cors==3.0.10
