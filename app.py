@@ -1,5 +1,6 @@
 import os
 import FruitClassifier
+import FruitClassifierTraining
 from flask import Flask, render_template
 from flask_cors import CORS, cross_origin
 
@@ -8,6 +9,15 @@ CORS(app)
 
 app.config['TEST_FOLDER'] = os.path.join(os.path.join('static/', 'fruit/'), 'test')
 
+@app.route('/train-model')
+@cross_origin()
+def train_model():
+    model, history = FruitClassifierTraining.train_model(4)
+
+    return {
+        "model": model,
+        "history": history
+    }
 
 @app.route('/fruit-classifier')
 @cross_origin()
