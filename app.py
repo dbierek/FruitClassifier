@@ -9,6 +9,7 @@ CORS(app)
 
 app.config['TEST_FOLDER'] = os.path.join(os.path.join('static/', 'fruit/'), 'test')
 
+
 @app.route('/train-model')
 @cross_origin()
 def train_model():
@@ -18,6 +19,7 @@ def train_model():
         "model": model,
         "history": history
     }
+
 
 @app.route('/fruit-classifier')
 @cross_origin()
@@ -31,7 +33,7 @@ def show_images():
     }
 
 
-@app.route('/get-file-names)')
+@app.route('/get-file-names')
 @cross_origin()
 def get_file_names():
     file_names = FruitClassifier.get_file_names()
