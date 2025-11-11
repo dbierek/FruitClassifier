@@ -5,7 +5,7 @@
 GUNICORN_USER_CMD="/home/bitnami/.local/bin/gunicorn" # <-- IMPORTANT: Replace this with the actual path from 'which gunicorn'
 
 echo "Starting gunicorn..."
-sudo -u bitnami ${GUNICORN_USER_CMD} --certfile cert.pem --keyfile privkey.pem --bind 0.0.0.0:5000 --pid gunicorn.pid app:app &
+sudo -u bitnami ${GUNICORN_USER_CMD} --certfile /home/bitnami/FruitClassifier/cert.pem --keyfile /home/bitnami/FruitClassifier/privkey.pem --bind 0.0.0.0:5000 --pid gunicorn.pid app:app &
 sleep 1 # Give gunicorn a moment to write the PID file
 GUNICORN_PID=""
 if [ -f gunicorn.pid ]; then
@@ -53,7 +53,7 @@ while true; do
 
         # Restart gunicorn
         echo "Restarting gunicorn..."
-            sudo -u bitnami ${GUNICORN_USER_CMD} --certfile cert.pem --keyfile privkey.pem --bind 0.0.0.0:5000 --pid gunicorn.pid app:app &
+            sudo -u bitnami ${GUNICORN_USER_CMD} --certfile /home/bitnami/FruitClassifier/cert.pem --keyfile /home/bitnami/FruitClassifier/privkey.pem --bind 0.0.0.0:5000 --pid gunicorn.pid app:app &
             sleep 1 # Give gunicorn a moment to write the PID file
             NEW_GUNICORN_PID=""
             if [ -f gunicorn.pid ]; then
