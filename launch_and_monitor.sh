@@ -5,7 +5,7 @@
 GUNICORN_USER_CMD="/home/bitnami/.local/bin/gunicorn" # <-- IMPORTANT: Replace this with the actual path from 'which gunicorn'
 
 echo "Starting gunicorn..."
-sudo -u bitnami ${GUNICORN_USER_CMD} --certfile /home/bitnami/FruitClassifier/cert.pem --keyfile /home/bitnami/FruitClassifier/privkey.pem --bind 0.0.0.0:5000 --pid gunicorn.pid app:app &
+sudo -u bitnami ${GUNICORN_USER_CMD} --workers 3 --bind unix:gunicorn.sock --pid gunicorn.pid app:app &
 sleep 1 # Give gunicorn a moment to write the PID file
 GUNICORN_PID=""
 if [ -f gunicorn.pid ]; then
@@ -17,9 +17,9 @@ echo "Starting monitoring loop..."
 while true; do
     echo "Sleeping for 20 minutes..."
     sleep 1200 # 20 minutes = 1200 seconds
-
-    echo "Pinging server at http://localhost:5000/fruit-classifier..."
-    curl --max-time 10 http://localhost:5000/fruit-classifier # 10 second timeout
+    
+    echo "Pinging server via socket..."
+    curl --max-time 10 --unix-socket gunicorn.sock http://localhost/fruit-classifier # 10 second timeout
     CURL_EXIT_CODE=$?
 
     # Curl exit codes:
@@ -53,7 +53,7 @@ while true; do
 
         # Restart gunicorn
         echo "Restarting gunicorn..."
-            sudo -u bitnami ${GUNICORN_USER_CMD} --certfile /home/bitnami/FruitClassifier/cert.pem --keyfile /home/bitnami/FruitClassifier/privkey.pem --bind 0.0.0.0:5000 --pid gunicorn.pid app:app &
+            sudo -u bitnami ${GUNICORN_USER_CMD} --workers 3 --bind unix:gunicorn.sock --pid gunicorn.pid app:app &
             sleep 1 # Give gunicorn a moment to write the PID file
             NEW_GUNICORN_PID=""
             if [ -f gunicorn.pid ]; then
