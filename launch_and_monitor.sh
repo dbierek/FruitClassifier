@@ -1,9 +1,17 @@
 #!/bin/bash
+
+# Define the full path to the gunicorn executable for the 'bitnami' user.
+# Find this path by running 'which gunicorn' as the 'bitnami' user.
+GUNICORN_USER_CMD="/home/bitnami/.local/bin/gunicorn" # <-- IMPORTANT: Replace this with the actual path from 'which gunicorn'
+
 echo "Starting gunicorn..."
-gunicorn --certfile cert.pem --keyfile privkey.pem --bind 0.0.0.0:5000 app:app &
-GUNICORN_PID=$!
-echo $GUNICORN_PID > gunicorn.pid
-echo "Gunicorn started with PID: $GUNICORN_PID"
+sudo -u bitnami ${GUNICORN_USER_CMD} --certfile cert.pem --keyfile privkey.pem --bind 0.0.0.0:5000 --pid gunicorn.pid app:app &
+sleep 1 # Give gunicorn a moment to write the PID file
+GUNICORN_PID=""
+if [ -f gunicorn.pid ]; then
+    GUNICORN_PID=$(cat gunicorn.pid)
+fi
+echo "Gunicorn started with PID: ${GUNICORN_PID}"
 
 echo "Starting monitoring loop..."
 while true; do
@@ -45,10 +53,14 @@ while true; do
 
         # Restart gunicorn
         echo "Restarting gunicorn..."
-        gunicorn --certfile cert.pem --keyfile privkey.pem --bind 0.0.0.0:5000 app:app &
-        NEW_GUNICORN_PID=$!
-        echo $NEW_GUNICORN_PID > gunicorn.pid
+            sudo -u bitnami ${GUNICORN_USER_CMD} --certfile cert.pem --keyfile privkey.pem --bind 0.0.0.0:5000 --pid gunicorn.pid app:app &
+            sleep 1 # Give gunicorn a moment to write the PID file
+            NEW_GUNICORN_PID=""
+            if [ -f gunicorn.pid ]; then
+                NEW_GUNICORN_PID=$(cat gunicorn.pid)
+            fi
         echo "Gunicorn restarted with new PID: $NEW_GUNICORN_PID"
+
     else
         echo "Server is responsive."
     fi
